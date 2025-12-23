@@ -1,60 +1,43 @@
-# Template: Python - Minimal
 
-This template leverages the new [Python framework](https://github.com/robocorp/robocorp), the [libraries](https://github.com/robocorp/robocorp/blob/master/docs/README.md#python-libraries) from to same project as well.
+# SalesDataRobotVer2
 
-The template provides you with the basic structure of a Python project: logging out of the box and controlling your tasks without fiddling with the base Python stuff. The environment contains the most used libraries, so you do not have to start thinking about those right away. 
+## 概要
+このロボットは、RobotSpareBin Industriesの注文サイトに対して、CSVの注文データをもとに自動で注文処理を行います。  
+注文ごとに **レシートPDF** と **スクリーンショット画像** を生成し、最後に **PDFをZIPアーカイブ** にまとめます。  
+Sema4.ai「Automation Certification Level II - Python」コースの課題として作成しました。
 
-👉 Other templates are available as well via our tooling and on our [Portal](https://robocorp.com/portal/tag/template)
+## 機能
+- ダウンロードした CSV ファイルから orders データを読み込み
+- orders レコード毎に、Robot Order ウェブサイトにデータを入力して注文を実行
+- 各注文の **HTMLレシート** を **PDF** に変換
+- 各注文の **スクリーンショット** を取得
+- スクリーンショットを **PDFレシートに追記（埋め込み）**
+- すべての PDF を **ZIP** (`output/output_pdfs.zip`) にまとめる
 
-## Running
+## 生成されるファイルと出力先
+- `output/receipts/receipt_<Order number>.pdf` : レシート PDF
+- `output/images/img_<Order number>.png` : スクリーンショット
+- `output/output_pdfs.zip` : レシート PDF をまとめた ZIP
 
-#### VS Code
-1. Get [Robocorp Code](https://robocorp.com/docs/developer-tools/visual-studio-code/extension-features) -extension for VS Code.
-1. You'll get an easy-to-use side panel and powerful command-palette commands for running, debugging, code completion, docs, etc.
+## 実行の流れ（内部処理）
+1. `https://robotsparebinindustries.com/orders.csv` をダウンロード
+2. CSV をテーブルとして読み込み（RPA.Tables）
+3. 各行のデータでフォームを入力し、注文を送信（robocorp.browser）
+4. レシートHTMLを PDF に変換（RPA.PDF）
+5. スクリーンショットを撮影し、PDFに追加（RPA.PDF）
+6. 全レシートPDFを ZIP でアーカイブ（RPA.Archive）
 
-#### Command line
+## 必要環境
+- Python（Robocorp の conda 環境を使用）
+- Robocorp ランタイム（`robot.yaml` / `conda.yaml` に定義）
+- 依存ライブラリ：  
+  - `robocorp.browser`  
+  - `RPA.HTTP` / `RPA.Tables` / `RPA.PDF` / `RPA.Archive`
 
-1. [Get RCC](https://github.com/robocorp/rcc?tab=readme-ov-file#getting-started)
-1. Use the command: `rcc run`
+## セットアップ & 実行方法
+> ※ Robocorp の rcc（または VS Code の Robocorp 拡張機能）を利用して実行する構成です。
 
-## Results
-
-🚀 After running the bot, check out the `log.html` under the `output` -folder.
-
-## Dependencies
-
-We strongly recommend getting familiar with adding your dependencies in [conda.yaml](conda.yaml) to control your Python dependencies and the whole Python environment for your automation.
-
-<details>
-  <summary>🙋‍♂️ "Why not just pip install...?"</summary>
-
-Think of [conda.yaml](conda.yaml) as an equivalent of the requirements.txt, but much better. 👩‍💻 With `conda.yaml`, you are not just controlling your PyPI dependencies; you control the complete Python environment, which makes things repeatable and easy.
-
-👉 You will probably need to run your code on another machine quite soon, so by using `conda.yaml`:
-- You can avoid `Works on my machine` -cases
-- You do not need to manage Python installations on all the machines
-- You can control exactly which version of Python your automation will run on 
-  - You'll also control the pip version to avoid dep. resolution changes
-- No need for venv, pyenv, ... tooling and knowledge sharing inside your team.
-- Define dependencies in conda.yaml, let our tooling do the heavy lifting.
-- You get all the content of [conda-forge](https://prefix.dev/channels/conda-forge) without any extra tooling
-
-> Dive deeper with [these](https://github.com/robocorp/rcc/blob/master/docs/recipes.md#what-is-in-condayaml) resources.
-
-</details>
-<br/>
-
-> The full power of [rpaframework](https://robocorp.com/docs/python/rpa-framework) -libraries is also available on Python as a backup while we implement the new Python libraries.
-
-## What now?
-
-🚀 Now, go get'em
-
-Start writing Python and remember that the AI/LLM's out there are getting really good and creating Python code specifically.
-
-👉 Try out [Robocorp ReMark 💬](https://chat.robocorp.com)
-
-For more information, do not forget to check out the following:
-- [Robocorp Documentation -site](https://robocorp.com/docs)
-- [Portal for more examples](https://robocorp.com/portal)
-- Follow our main [robocorp -repository](https://github.com/robocorp/robocorp) as it is the main location where we developed the libraries and the framework.
+1. リポジトリをクローン
+   ```bash
+   git clone https://github.com/megumi-python/SalesDataRobotVer2.git
+   cd SalesDataRobotVer2
